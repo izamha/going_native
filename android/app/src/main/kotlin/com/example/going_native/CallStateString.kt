@@ -2,8 +2,8 @@ package com.example.going_native
 
 import android.os.Bundle
 import android.telecom.Call
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import timber.log.Timber
 
 fun Int.asString(): String = when (this) {
     Call.STATE_NEW -> "NEW"
@@ -15,7 +15,7 @@ fun Int.asString(): String = when (this) {
     Call.STATE_DISCONNECTED -> "DISCONNECTING"
     Call.STATE_SELECT_PHONE_ACCOUNT -> "SELECT_PHONE_ACCOUNT"
     else -> {
-        Timber.w("Unknown state $this")
+        Log.w("CallStateString", "Unknown state $this")
         "UNKNOWN"
     }
 

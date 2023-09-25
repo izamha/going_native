@@ -3,9 +3,9 @@ package com.example.going_native
 import android.os.Build
 import android.telecom.Call
 import android.telecom.VideoProfile
+import android.util.Log
 import androidx.annotation.RequiresApi
 import io.reactivex.subjects.BehaviorSubject
-import timber.log.Timber
 
 object OngoingCall {
     val state: BehaviorSubject<Int> = BehaviorSubject.create()
@@ -13,7 +13,7 @@ object OngoingCall {
     private val callback = @RequiresApi(Build.VERSION_CODES.M)
     object: Call.Callback() {
         override fun onStateChanged(call: Call?, newState: Int) {
-            Timber.d(call.toString())
+            Log.d("onStateChanged", call.toString())
             state.onNext(newState)
         }
     }

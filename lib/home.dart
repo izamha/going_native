@@ -10,7 +10,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   // String _batteryLevel = 'Unknown battery level...';
-  final String _callStatus = "Initiating a call...";
+  final String _callStatus = "Initiating a call with the self...";
 
   static const platform = MethodChannel('askfield.com/battery');
 

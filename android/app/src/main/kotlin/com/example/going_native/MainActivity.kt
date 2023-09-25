@@ -5,14 +5,16 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.os.BatteryManager
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.telecom.TelecomManager
-import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
-import androidx.core.content.PermissionChecker.checkSelfPermission
-import androidx.core.app.ActivityCompat.requestPermissions
+import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat.requestPermissions
+import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.core.net.toUri
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -20,7 +22,6 @@ import io.flutter.plugin.common.MethodChannel
 
 
 class MainActivity: FlutterActivity() {
-    private val CHANNEL = "askfield.com/battery"
     private lateinit var channel: MethodChannel
 
     @RequiresApi(VERSION_CODES.M)
@@ -42,7 +43,6 @@ class MainActivity: FlutterActivity() {
 
         channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
 
-
         channel.setMethodCallHandler { call, result ->
             if (call.method == "initiateCall") {
                 initiateCall()
@@ -54,26 +54,27 @@ class MainActivity: FlutterActivity() {
     }
 
     @RequiresApi(VERSION_CODES.M)
-    private fun initiateCall() {
-        if (checkSelfPermission(this, CALL_PHONE) == PERMISSION_GRANTED) {
+    private fun initiateACall() {
+        val permission = ContextCompat.checkSelfPermission(this, CALL_PHONE)
+        if (permission == PackageManager.PERMISSION_GRANTED) {
             val uri = "tel:${MY_PHONE_NUMBER}".toUri()
             startActivity(Intent(Intent.ACTION_CALL, uri))
         } else {
             requestPermissions(this, arrayOf(CALL_PHONE), REQUEST_PERMISSION)
+            Log.i("initiateCall", "initiateCall: COULD NOT MAKE A CALL")
         }
     }
 
     @RequiresApi(VERSION_CODES.M)
-    private fun initiateCall2() {
-        println("Initiating a call...[FROM NATIVE CODE]")
+    private fun initiateCall() {
         if (getSystemService(TelecomManager::class.java).defaultDialerPackage != packageName) {
             Intent(TelecomManager.ACTION_CHANGE_DEFAULT_DIALER)
                 .putExtra(TelecomManager.EXTRA_CHANGE_DEFAULT_DIALER_PACKAGE_NAME, packageName)
                 .let(::startActivity)
-            println("No need to ask for Permissions")
+            Log.e("initiateCall", "No need to ask for Permissions")
 
         } else {
-            println("There's a need to ask for permissions")
+            initiateACall()
         }
     }
 
@@ -90,7 +91,7 @@ class MainActivity: FlutterActivity() {
         return batteryLevel
     }
 
-    private fun batteryChannelMethodHandler() {
+    private fun batteryChannelMethodHandler(channel: MethodChannel) {
        //   Receive the data from Flutter
         channel.setMethodCallHandler { call, result ->
             if (call.method == "getBatteryLevel") {
@@ -109,5 +110,6 @@ class MainActivity: FlutterActivity() {
     companion object {
         const val REQUEST_PERMISSION = 0
         const val MY_PHONE_NUMBER = "0787907590"
+        const val CHANNEL = "askfield.com/battery"
     }
 }
