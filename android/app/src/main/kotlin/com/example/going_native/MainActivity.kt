@@ -34,6 +34,7 @@ class MainActivity: FlutterActivity() {
 
         if (requestCode == REQUEST_PERMISSION && PERMISSION_GRANTED in grantResults) {
             // makeTheActualCall()
+            Log.i("PERM_RESULT", "onRequestPermissionsResult: ")
         }
     }
 
@@ -44,8 +45,9 @@ class MainActivity: FlutterActivity() {
         channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
 
         channel.setMethodCallHandler { call, result ->
+            val phoneNumbers = (call.arguments) as List<*>
             if (call.method == "initiateCall") {
-                initiateCall()
+                initiateCall(phoneNumbers)
             } else {
                 result.notImplemented()
             }
@@ -54,10 +56,10 @@ class MainActivity: FlutterActivity() {
     }
 
     @RequiresApi(VERSION_CODES.M)
-    private fun initiateACall() {
+    private fun initiateACall(phoneNumbers: List<*>) {
         val permission = ContextCompat.checkSelfPermission(this, CALL_PHONE)
         if (permission == PackageManager.PERMISSION_GRANTED) {
-            val uri = "tel:${MY_PHONE_NUMBER}".toUri()
+            val uri = "tel:${phoneNumbers[1]}".toUri()
             startActivity(Intent(Intent.ACTION_CALL, uri))
         } else {
             requestPermissions(this, arrayOf(CALL_PHONE), REQUEST_PERMISSION)
@@ -66,7 +68,7 @@ class MainActivity: FlutterActivity() {
     }
 
     @RequiresApi(VERSION_CODES.M)
-    private fun initiateCall() {
+    private fun initiateCall(phoneNumbers: List<*>) {
         if (getSystemService(TelecomManager::class.java).defaultDialerPackage != packageName) {
             Intent(TelecomManager.ACTION_CHANGE_DEFAULT_DIALER)
                 .putExtra(TelecomManager.EXTRA_CHANGE_DEFAULT_DIALER_PACKAGE_NAME, packageName)
@@ -74,7 +76,8 @@ class MainActivity: FlutterActivity() {
             Log.e("initiateCall", "No need to ask for Permissions")
 
         } else {
-            initiateACall()
+            initiateACall(phoneNumbers)
+            println("phoneNumber 1: ${phoneNumbers[1]}")
         }
     }
 

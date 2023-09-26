@@ -77,7 +77,7 @@ class MyCallActivity : AppCompatActivity() {
     companion object {
         @RequiresApi(Build.VERSION_CODES.M)
         fun start(context: Context, call: Call) {
-            Intent(context, CallActivity::class.java)
+            Intent(context, MyCallActivity::class.java)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .setData(call.details.handle)
                 .let(context::startActivity)

@@ -63,7 +63,10 @@
             </intent-filter>
         </service>
         <!--The custom Activity for call-->
-        <activity android:name=".MyCallActivity" />
+        <activity
+            android:name=".MyCallActivity"
+            android:hardwareAccelerated="true"
+            android:theme="@style/NormalTheme" />
 
         <!--
             Don't delete the meta-data below.

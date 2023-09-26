@@ -64,8 +64,9 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _initiateCall() async {
+    List<String> phoneNumbers = ["0787907590", "0739242725"];
     try {
-      await platform.invokeMethod('initiateCall');
+      await platform.invokeMethod('initiateCall', phoneNumbers);
     } on PlatformException catch (e) {
       debugPrint("Error => ${e.message}");
     }

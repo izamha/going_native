@@ -3,7 +3,6 @@ package com.example.going_native
 import android.os.Bundle
 import android.telecom.Call
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 
 fun Int.asString(): String = when (this) {
     Call.STATE_NEW -> "NEW"
@@ -21,9 +20,9 @@ fun Int.asString(): String = when (this) {
 
 }
 
-class CallActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_call)
-    }
-}
+//class CallActivity : AppCompatActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContentView(R.layout.activity_call)
+//    }
+//}
