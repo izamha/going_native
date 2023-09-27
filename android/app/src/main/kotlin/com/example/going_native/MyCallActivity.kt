@@ -25,48 +25,65 @@ class MyCallActivity : AppCompatActivity() {
     private lateinit var callInfo: TextView
     private lateinit var answer: Button
     private lateinit var hangup: Button
+    private lateinit var questionaire: Button
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_call)
-        answer =  findViewById(R.id.answer);
-        hangup =  findViewById(R.id.hangup);
-        callInfo =  findViewById(R.id.callInfo);
+//        moveTaskToBack(true)
+        answer = findViewById(R.id.answer)
+        hangup = findViewById(R.id.hangup)
+        callInfo = findViewById(R.id.callInfo)
+        questionaire = findViewById(R.id.btn_questionaire)
+
         number = intent.data?.schemeSpecificPart.toString()
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onStart() {
         super.onStart()
-        answer.setOnClickListener {
-            OngoingCall.answer()
-        }
-        hangup.setOnClickListener {
-            OngoingCall.hangup()
-        }
-        OngoingCall.state
-            .subscribe(::updateUi)
-            .addTo(disposables)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            answer.setOnClickListener {
+                OngoingCall.answer()
+            }
+            hangup.setOnClickListener {
+                OngoingCall.hangup()
+            }
 
-        OngoingCall.state
-            .filter { it == Call.STATE_DISCONNECTED }
-            .delay(1, TimeUnit.SECONDS)
-            .firstElement()
-            .subscribe { finish() }
-            .addTo(disposables)
+            questionaire.setOnClickListener {
+                val questionaireIntent = Intent(
+                    this,
+                    QuestionaireActivity::class.java
+                ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(questionaireIntent)
+            }
+
+            OngoingCall.state
+                .subscribe(::updateUi)
+                .addTo(disposables)
+
+            OngoingCall.state
+                .filter { it == Call.STATE_DISCONNECTED }
+                .delay(1, TimeUnit.SECONDS)
+                .firstElement()
+                .subscribe { finish() }
+                .addTo(disposables)
+
+        }
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("SetTextI18n")
     private fun updateUi(state: Int) {
-        callInfo.text = "${state.asString().lowercase(Locale.ROOT).capitalize(Locale.ROOT)}\n$number"
-        answer.isVisible = state == Call.STATE_RINGING
-        hangup.isVisible = state in listOf(
-            Call.STATE_DIALING,
-            Call.STATE_RINGING,
-            Call.STATE_ACTIVE
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            callInfo.text =
+                "${state.asString().lowercase(Locale.ROOT).uppercase(Locale.ROOT)}\n\n$number"
+            answer.isVisible = state == Call.STATE_RINGING
+            hangup.isVisible = state in listOf(
+                Call.STATE_DIALING,
+                Call.STATE_RINGING,
+                Call.STATE_ACTIVE
+            )
+        }
     }
 
     override fun onStop() {

@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.BatteryManager
+import android.os.Build
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.telecom.TelecomManager
@@ -38,20 +39,23 @@ class MainActivity: FlutterActivity() {
         }
     }
 
-    @RequiresApi(VERSION_CODES.M)
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
-        channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
-
-        channel.setMethodCallHandler { call, result ->
-            val phoneNumbers = (call.arguments) as List<*>
-            if (call.method == "initiateCall") {
-                initiateCall(phoneNumbers)
-            } else {
-                result.notImplemented()
-            }
-        }
+       if (VERSION.SDK_INT >= VERSION_CODES.M) {
+           channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+           channel.setMethodCallHandler { call, result ->
+               val phoneNumbers = (call.arguments) as List<*>
+               if (call.method == "initiateCall") {
+                   initiateCall(phoneNumbers)
+               } else {
+                   result.notImplemented()
+               }
+           }
+       } else {
+           println(">= VERSION_CODES.M")
+       }
 
     }
 

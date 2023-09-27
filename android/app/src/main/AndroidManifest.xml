@@ -7,11 +7,18 @@
 
     <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:label="going_native">
+        <!--A second activity upon making a call-->
+        <activity
+            android:name=".QuestionaireActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat"/>
 
         <activity
             android:name=".MainActivity"
@@ -20,8 +27,8 @@
             android:hardwareAccelerated="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
-            android:windowSoftInputMode="adjustResize" 
-            >
+            android:windowSoftInputMode="adjustResize">
+
             <!--
                  Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
@@ -34,9 +41,11 @@
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
+
                 <!-- Handle links from other applications -->
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.DIAL" />
@@ -44,13 +53,16 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <!-- Handle links in browsers -->
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="tel" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.DIAL" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".MyCallService"
             android:exported="true"
@@ -58,16 +70,15 @@
             <meta-data
                 android:name="android.telecom.IN_CALL_SERVICE_UI"
                 android:value="true" />
+
             <intent-filter>
                 <action android:name="android.telecom.InCallService" />
             </intent-filter>
         </service>
-        <!--The custom Activity for call-->
         <activity
             android:name=".MyCallActivity"
             android:hardwareAccelerated="true"
-            android:theme="@style/NormalTheme" />
-
+            android:theme="@style/Theme.AppCompat" />
         <!--
             Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java
